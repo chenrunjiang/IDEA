@@ -19,6 +19,6 @@ let navigationOptions = {
         width: 80,
         color: "rgba(255,255,255,0.8)",
     },
-}
+};
 
 export default navigationOptions;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { TextInput, View } from 'react-native';
 import color from '../common/color'
+import realm from "../common/realm";
 
 export default class EditScreen extends Component {
     render() {
@@ -9,8 +10,7 @@ export default class EditScreen extends Component {
         idea = idea || {};
 
         return (
-            <View style={{
-            }}>
+            <View style={{}}>
                 <TextInput style={{
                         minHeight: 80,
                         height: '10%',
@@ -44,4 +44,6 @@ export default class EditScreen extends Component {
             </View>
         )
     }
+
+
 }

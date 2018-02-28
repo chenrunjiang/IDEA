@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableNativeFeedback, Image } from 'react-native';
+import { View, TouchableNativeFeedback, Image } from 'react-native';
 
 import Editor from '../Components/Editor'
 
 import realm from '../common/realm'
 import {rmIcon} from '../common/icon'
 import navigationOptions from '../common/navigation'
+import DeviceInfo from 'react-native-device-info'
+
+// const UniqueID = DeviceInfo.getUniqueID();
 
 export default class EditScreen extends Component {
     static navigationOptions = ({ navigation }) => {
         const {rm} = navigation.state.params;
 
         return Object.assign({
+            title: '',
             headerRight:(
                 <TouchableNativeFeedback
                     onPress={()=>rm()}
@@ -69,6 +73,7 @@ export default class EditScreen extends Component {
             } else {
                 this.idea.title = text;
             }
+            this.update_td_idf();
         })
     }
 
@@ -84,7 +89,23 @@ export default class EditScreen extends Component {
             } else {
                 this.idea.content = text;
             }
+
+            this.update_td_idf();
         })
+    }
+
+    update_td_idf() {
+        let { idea } = this.props;
+
+        if (idea) {
+            fetch('http://207.148.77.45:3000/tf-idf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({content:idea.content.trim(), UniqueID }) ,
+            }).then(response => response.json()) .then(result => {console.log(result)})
+        }
     }
 
 }

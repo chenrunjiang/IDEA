@@ -4,19 +4,19 @@ import color from '../common/color'
 
 export default class Item extends Component {
     render() {
-        let {data,navigate,text} = this.props;
-        let {title, content} = data;
+        let {data,navigate,text,onLoadHtml} = this.props;
+        let {title, content, url} = data;
 
         content = (content||'').replace(/\n/g, ' ');
 
         if (text) {
-            title = this.searchText(title, text);
-            content = this.searchText(content, text);
+            title = Item.searchText(title, text);
+            content = Item.searchText(content, text);
         }
 
         return (
             <TouchableNativeFeedback
-                onPress={()=>navigate("Edit", {idea:data})}
+                onPress={()=>url?navigate("Browser", {data,onLoadHtml}):navigate("Edit", {idea:data})}
                 background={TouchableNativeFeedback.Ripple('rgba(0,0,0,.1)', false) }>
                 <View style={{
                     marginBottom: 10,
@@ -24,7 +24,7 @@ export default class Item extends Component {
                     backgroundColor: "#fff",
                     elevation: 2,
                 }}>
-                    <Text style={{
+                    <Text numberOfLines={1} style={{
                         color:'#333',
                         fontSize: 16,
                     }}>{title}</Text>
@@ -38,13 +38,15 @@ export default class Item extends Component {
                     <Text style={{
                         color:'#ccc',
                         fontSize: 11,
-                    }}>{this.str_date(data.update_at)}</Text>
+                    }}>{Item.str_date(data.update_at)}</Text>
                 </View>
             </TouchableNativeFeedback>
         )
     }
 
-    str_date(date) {
+    static str_date(date) {
+        if (!date || date.constructor !== Date) return date||'';
+
         let str = '';
 
         if (new Date().getFullYear() > date.getFullYear()) {
@@ -59,9 +61,9 @@ export default class Item extends Component {
         return str;
     }
 
-    searchText(s1, s2) {
+    static searchText(s1, s2) {
         let i = s1.indexOf(s2);
-        if (i == -1) return s1;
+        if (i === -1) return s1;
 
         let str = [];
         str.push(i > 10 ? '... '+s1.substr(i-10, 10) : s1.substr(0, i));

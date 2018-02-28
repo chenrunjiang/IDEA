@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import { TextInput, ScrollView } from 'react-native';
-import App from '../App'
 import navigationOptions from '../common/navigation'
 import realm from '../common/realm'
 import Item from '../Components/Item'
 
 export default class SearchScreen extends Component {
-    state = { data: this.getIdeasSort()}
+    state = { data: SearchScreen.getIdeasSort()};
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
 
         return Object.assign({
+            title: '',
             headerTitle: <TextInput style={{
                     width: 350,
                     height: 50,
@@ -27,14 +27,12 @@ export default class SearchScreen extends Component {
     };
 
     componentWillMount() {
-        const { navigate } = this.props.navigation;
-
         this.props.navigation.setParams({
             search: (text) => this.setState({text}),
         });
 
         realm.addListener('change', () => {
-            this.setState({data: this.getIdeasSort()});
+            this.setState({data: SearchScreen.getIdeasSort()});
         })
     }
 
@@ -56,7 +54,7 @@ export default class SearchScreen extends Component {
         )
     }
 
-    getIdeasSort() {
+    static getIdeasSort() {
         return realm.objects('Idea').sorted('update_at', true);
     }
 }

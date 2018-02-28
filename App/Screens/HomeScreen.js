@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StatusBar, Image, ScrollView, TouchableNativeFeedback} from 'react-native';
+import { View, StatusBar, Image, ScrollView, TouchableNativeFeedback} from 'react-native';
 
 import {searchIcon,addIcon,netIcon} from '../common/icon'
 import navigationOptions from '../common/navigation'
@@ -7,14 +7,17 @@ import realm from '../common/realm'
 
 import Item from '../Components/Item'
 
+
 export default class HomeScreen extends Component {
-    state = { data: this.getIdeasSort()}
+    state = { data: HomeScreen.getIdeasSort()};
 
     static navigationOptions = ({ navigation }) => {
         const params = navigation.state.params || {};
 
         return Object.assign({
             title: 'IDEA',
+            tabBarLabel: 'IDEA',
+
             headerRight:(
                 <TouchableNativeFeedback
                     onPress={()=>params.toSearchScreen()}
@@ -43,8 +46,8 @@ export default class HomeScreen extends Component {
         });
 
         realm.addListener('change', () => {
-            this.setState({data: this.getIdeasSort()});
-        })
+            this.setState({data: HomeScreen.getIdeasSort()});
+        });
     }
 
     render() {
@@ -56,6 +59,7 @@ export default class HomeScreen extends Component {
                 <StatusBar
                     backgroundColor={'rgba(0,0,0,.15)'}
                     translucent={true} />
+
 
                 <ScrollView>
                     {(data||[]).map((idea,i) => (<Item data={idea} key={i} navigate={navigate} />))}
@@ -70,7 +74,7 @@ export default class HomeScreen extends Component {
                     }}>
 
                     <TouchableNativeFeedback
-                        onPress={()=>navigate("Add",{})}
+                        onPress={()=>navigate("Find",{navigate})}
                         background={TouchableNativeFeedback.Ripple('rgba(0,0,0,.3)', true) }>
                         <View>
                             <Image style={{
@@ -99,7 +103,7 @@ export default class HomeScreen extends Component {
         );
     }
 
-    getIdeasSort() {
+    static getIdeasSort() {
         return realm.objects('Idea').sorted('update_at', true);
     }
 }

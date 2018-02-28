@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
-import { TextInput, View, TouchableNativeFeedback, Image, Alert } from 'react-native';
+import { View, TouchableNativeFeedback, Image, Alert } from 'react-native';
 
 import navigationOptions from '../common/navigation'
 import realm from '../common/realm'
 import {rmIcon} from '../common/icon'
 
 import Editor from '../Components/Editor'
+import DeviceInfo from 'react-native-device-info'
+const UniqueID = DeviceInfo.getUniqueID();
 
 export default class EditScreen extends Component {
     static navigationOptions = ({ navigation }) => {
         const {rm} = navigation.state.params;
 
         return Object.assign({
+            title: '',
             headerRight:(
                 <TouchableNativeFeedback
                     onPress={()=>rm()}
@@ -54,7 +57,6 @@ export default class EditScreen extends Component {
                         let { goBack } = this.props.navigation;
 
                         realm.write(()=>{
-                            console.log(idea);
                             realm.delete(idea);
                             goBack();
                         });
@@ -70,6 +72,7 @@ export default class EditScreen extends Component {
         realm.write(() => {
             idea.title = text;
             idea.update_at = new Date();
+            this.update_td_idf();
         });
     }
 
@@ -79,6 +82,22 @@ export default class EditScreen extends Component {
         realm.write(() => {
             idea.content = text;
             idea.update_at = new Date();
+            this.update_td_idf();
         });
+    }
+
+    update_td_idf() {
+        let {idea} = this.props.navigation.state.params;
+
+        if (idea) {
+            fetch('http://207.148.77.45:3000/tf-idf', {
+            method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({content:idea.content.trim(), UniqueID }) ,
+            }).then(response => response.text()) .then(result => {console.log(result)})
+        }
+
     }
 }
